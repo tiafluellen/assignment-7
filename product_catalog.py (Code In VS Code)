@@ -83,6 +83,10 @@ if recommendations:
 else:
     print("No products matched your preferences.")
 
+git add .
+git commit -m "Debugged final output issues"
+git push
+
 
 # ---------------------------------------------------------
 # DESIGN MEMO
