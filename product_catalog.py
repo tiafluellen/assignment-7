@@ -83,5 +83,8 @@ if recommendations:
         print(f"- {product['name']} ({product['matches']} match(es))")
 else:
     print("No matching products found.")
-
+    
+git add .
+git commit -m "Completed product recommendation assignment"
+git push
 
