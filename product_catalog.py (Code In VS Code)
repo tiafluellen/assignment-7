@@ -85,6 +85,5 @@ else:
     print("No matching products found.")
     
 git add .
-git commit -m "Completed product recommendation assignment"
+git commit -m "Debugged final output issues"
 git push
-
