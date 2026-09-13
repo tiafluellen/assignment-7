@@ -1,62 +1,55 @@
-# Mock product catalog
-products = [
-    {
-        "name": "Eco Water Bottle",
-        "tags": ["eco-friendly", "durable", "recyclable"]
-    },
-    {
-        "name": "Trail Backpack",
-        "tags": ["durable", "water-resistant", "lightweight"]
-    },
-    {
-        "name": "Vegan Leather Wallet",
-        "tags": ["vegan", "stylish", "compact"]
-    },
-    {
-        "name": "Bamboo Toothbrush",
-        "tags": ["eco-friendly", "vegan", "biodegradable"]
-    },
-    {
-        "name": "Smartwatch",
-        "tags": ["tech", "durable", "stylish"]
-    }
-]
+# Product Recommendation Tool
+
+from products import products
 
 
-# Store customer preferences
+# Step 2: Explore the product data
+print("First few products:")
+print(products[:3])
+print()
+
+
+# Step 3: Collect customer preferences
 customer_preferences = []
 
 while True:
     preference = input("Input a preference: ").strip().lower()
-    customer_preferences.append(preference)
 
-    another = input("Do you want to add another preference? (Y/N): ").strip().lower()
+    if preference:
+        customer_preferences.append(preference)
 
-    if another == "n":
+    another = input("Do you want to add another preference? (Y/N): ").strip().upper()
+
+    if another == "N":
         break
 
 
-# Convert customer preferences to a set
+# Step 4: Convert customer preferences to a set
+# This removes duplicate preferences.
 customer_preferences = set(customer_preferences)
 
 
-# Convert product tags to sets
+# Convert each product's tags to a set
+# so that set operations can be used to find matches.
+products_with_sets = []
+
 for product in products:
-    product["tags"] = set(product["tags"])
+    product_copy = product.copy()
+    product_copy["tags"] = set(product["tags"])
+    products_with_sets.append(product_copy)
 
 
+# Step 5: Count matching tags
 def count_matches(product_tags, customer_preferences):
     """
-    Count how many tags a product shares with the customer's preferences.
+    Count how many tags a product has in common
+    with the customer's preferences.
     """
     return len(product_tags.intersection(customer_preferences))
 
 
+# Step 6: Build the recommendation function
 def recommend_products(products, customer_preferences):
-    """
-    Return products that have at least one matching tag,
-    sorted from most matches to fewest matches.
-    """
     recommendations = []
 
     for product in products:
@@ -68,22 +61,59 @@ def recommend_products(products, customer_preferences):
                 "matches": matches
             })
 
+    # Sort products from highest number of matches to lowest
     recommendations.sort(key=lambda product: product["matches"], reverse=True)
 
     return recommendations
 
 
-# Generate recommendations
-recommendations = recommend_products(products, customer_preferences)
+# Get recommendations
+recommendations = recommend_products(
+    products_with_sets,
+    customer_preferences
+)
 
+
+# Print recommendations
 print("\nRecommended Products:")
 
 if recommendations:
     for product in recommendations:
         print(f"- {product['name']} ({product['matches']} match(es))")
 else:
-    print("No matching products found.")
-    
-git add .
-git commit -m "Debugged final output issues"
-git push
+    print("No products matched your preferences.")
+
+
+# ---------------------------------------------------------
+# DESIGN MEMO
+# ---------------------------------------------------------
+#
+# I used lists, sets, loops, and set intersections to build
+# the recommendation tool. A list is useful for storing the
+# customer's preferences while they are being entered because
+# values can be added as the program runs. I then converted
+# the preferences to a set so duplicate preferences are
+# automatically removed. I also converted each product's tags
+# into a set. This allows the program to use set intersection
+# to quickly find tags that appear in both the product and the
+# customer's preferences. The count of the intersection gives
+# the product's match score. I used loops to go through the
+# products and calculate a score for each one. Products with
+# at least one matching tag are added to the recommendation
+# list, and the final list is sorted from the highest score to
+# the lowest score so the most relevant products appear first.
+#
+# If the catalog grew to 1,000 or more products, this basic
+# approach could still work, but the program would need to be
+# optimized for a larger system. Converting tags to sets is
+# already helpful because set membership and intersection
+# operations are efficient. For a much larger catalog, I could
+# create an index that maps each tag to the products containing
+# that tag. Then, instead of checking every product for every
+# customer, the program could quickly find products associated
+# with the customer's preferred tags. A database could also
+# store the product catalog instead of keeping everything in
+# memory. Caching frequently requested recommendations could
+# further improve performance. These changes would make the
+# system more scalable while keeping the same basic
+# recommendation logic.
